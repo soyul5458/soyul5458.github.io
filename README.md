@@ -1,6 +1,6 @@
 # AURA LAB — GitHub Pages
 
-한소율 연구실 AURA LAB 홈페이지
+[한소율 연구실 AURA LAB 홈페이지](https://soyul5458.github.io/soyulhan-aura.github.io/) 
 
 ## GitHub Pages에 게시하기
 
