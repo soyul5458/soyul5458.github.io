@@ -1,0 +1,957 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AURA LAB</title>
+<meta name="description" content="AURA LAB — Audio Understanding &amp; Reasoning AI Lab, Department of AI Data Science, Hannam University.">
+<meta property="og:title" content="AURA LAB">
+<meta property="og:description" content="Audio Understanding &amp; Reasoning AI Lab, Hannam University">
+<meta name="theme-color" content="#FCFCFD">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23FCFCFD'/%3E%3Ctext x='16' y='22' font-family='Georgia,serif' font-size='17' text-anchor='middle' fill='%236B2737'%3EA%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&amp;family=Noto+Sans+KR:wght@300;400;500&amp;family=Noto+Serif+KR:wght@300;400;500;600&amp;display=swap">
+<style>
+:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}
+
+/* ── tokens ─────────────────────────────────────────────────────────── */
+:root{
+  --paper:#FCFCFD;
+  --panel:#FFFFFF;
+  --wash:#F4F4F6;
+  --ink:#15171C;
+  --ink-2:#4E555F;
+  --muted:#8B929B;
+  --line:#E4E6EA;
+  --line-2:#CFD3D9;
+  --accent:#6B2737;
+  --accent-2:#8E3B4D;
+  --rule-strong:#15171C;
+  --maxw:840px;
+  --maxw-wide:1180px;
+  --serif:"EB Garamond","Noto Serif KR",Georgia,"Times New Roman",serif;
+  --sans:"Noto Sans KR",-apple-system,BlinkMacSystemFont,"Segoe UI","Malgun Gothic",sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#121316;
+    --panel:#191B1F;
+    --wash:#1E2025;
+    --ink:#E9EAED;
+    --ink-2:#AFB5BD;
+    --muted:#7D848D;
+    --line:#292C32;
+    --line-2:#3A3E45;
+    --accent:#C0808C;
+    --accent-2:#D09AA4;
+    --rule-strong:#3A3E45;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#121316;
+  --panel:#191B1F;
+  --wash:#1E2025;
+  --ink:#E9EAED;
+  --ink-2:#AFB5BD;
+  --muted:#7D848D;
+  --line:#292C32;
+  --line-2:#3A3E45;
+  --accent:#C0808C;
+  --accent-2:#D09AA4;
+  --rule-strong:#3A3E45;
+}
+
+/* ── base ───────────────────────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scrollbar-gutter:stable;overflow-y:scroll}
+body{
+  margin:0;
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--serif);
+  font-size:19px;
+  line-height:1.72;
+  font-variant-numeric:lining-nums tabular-nums;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+img{max-width:100%;display:block}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline;text-underline-offset:.22em;text-decoration-thickness:.5px}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+:focus-visible{outline:1.5px solid var(--accent);outline-offset:3px}
+p{margin:0}
+ul{margin:0;padding:0;list-style:none}
+
+.lab{
+  font-family:var(--sans);font-size:.665rem;font-weight:500;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--muted);
+}
+.num{font-family:var(--sans);font-size:.78rem;font-weight:300;color:var(--muted);letter-spacing:.02em}
+
+.wrap{width:100%;max-width:var(--maxw);margin-inline:auto;padding-inline:28px}
+.wrap-wide{width:100%;max-width:var(--maxw-wide);margin-inline:auto;padding-inline:28px}
+@media (max-width:620px){.wrap,.wrap-wide{padding-inline:20px}}
+
+.skip{position:absolute;left:-9999px;top:0;background:var(--ink);color:var(--paper);padding:.6rem 1rem;z-index:200}
+.skip:focus{left:10px;top:10px}
+
+/* ── masthead ───────────────────────────────────────────────────────── */
+.masthead{border-bottom:1px solid var(--line);background:var(--paper)}
+.masthead .wrap-wide{
+  display:flex;align-items:baseline;justify-content:space-between;gap:26px;
+  padding-block:22px;
+}
+.wordmark{display:flex;flex-direction:column;gap:1px}
+.wordmark:hover{text-decoration:none}
+.wordmark b{
+  font-weight:500;font-size:1.34rem;letter-spacing:.13em;color:var(--ink);line-height:1;
+}
+.wordmark span{font-family:var(--sans);font-size:.6rem;letter-spacing:.17em;text-transform:uppercase;color:var(--muted)}
+
+nav.main{display:flex;align-items:baseline;gap:22px}
+nav.main a{
+  font-family:var(--sans);font-size:.735rem;font-weight:400;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--ink-2);padding-bottom:3px;border-bottom:1px solid transparent;
+}
+nav.main a:hover{color:var(--ink);text-decoration:none;border-bottom-color:var(--line-2)}
+nav.main a[aria-current="page"]{color:var(--accent);border-bottom-color:var(--accent)}
+
+.burger{
+  display:none;font-family:var(--sans);font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink-2);border:1px solid var(--line-2);padding:.35rem .7rem;
+}
+@media (max-width:820px){
+  .masthead .wrap-wide{align-items:center}
+  nav.main{
+    display:none;position:absolute;top:100%;left:0;right:0;z-index:50;flex-direction:column;align-items:flex-start;gap:0;
+    background:var(--panel);border-bottom:1px solid var(--line);padding:6px 28px 14px;
+  }
+  nav.main.open{display:flex}
+  nav.main a{padding:.62rem 0;width:100%;border-bottom:1px solid var(--line)}
+  nav.main a:last-child{border-bottom:0}
+  .burger{display:block}
+  .masthead{position:relative}
+}
+
+/* ── page furniture ─────────────────────────────────────────────────── */
+main{display:block;padding-bottom:96px}
+.page{padding-top:64px}
+@media (max-width:620px){.page{padding-top:46px}}
+
+.page-title{
+  font-weight:400;font-size:clamp(2rem,3.6vw,2.6rem);line-height:1.15;margin:0;
+  letter-spacing:-.005em;
+}
+.page-intro{margin-top:10px;color:var(--ink-2);max-width:60ch}
+.rule{height:1px;background:var(--line);border:0;margin:0}
+
+section.block{margin-top:56px}
+section.block:first-of-type{margin-top:40px}
+h2.sec{
+  font-family:var(--sans);font-size:.84rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink-2);margin:0 0 6px;padding-bottom:9px;border-bottom:1px solid var(--rule-strong);
+}
+
+/* two-column record rows (CV, projects, awards, courses …) */
+.rows{display:flex;flex-direction:column}
+.row{
+  display:grid;grid-template-columns:170px 1fr;gap:26px;
+  padding:14px 0;border-bottom:1px solid var(--line);
+}
+.row:last-child{border-bottom:0}
+.row.full{grid-template-columns:1fr;gap:0}
+@media (max-width:620px){.row{grid-template-columns:1fr;gap:3px;padding:12px 0}}
+.row > .when{font-family:var(--sans);font-size:.88rem;font-weight:400;color:var(--ink-2);letter-spacing:.02em;padding-top:.34em;white-space:nowrap}
+.row > .what{min-width:0}
+.row .t{font-size:1.1rem;line-height:1.5}
+.row .t b{font-weight:600}
+.row .s{color:var(--ink-2);font-size:1.03rem;line-height:1.6}
+.row .s2{color:var(--ink);font-size:1rem;line-height:1.6}
+
+/* course list: name left, terms right */
+.crow{
+  display:grid;grid-template-columns:1fr auto;gap:24px;align-items:baseline;
+  padding:13px 0;border-bottom:1px solid var(--line);
+}
+.crow:last-child{border-bottom:0}
+.crow .cn{font-size:1.04rem}
+.crow .ct{
+  font-family:var(--sans);font-size:.88rem;font-weight:400;letter-spacing:.02em;
+  color:var(--ink-2);text-align:right;white-space:nowrap;
+}
+@media (max-width:480px){.crow{grid-template-columns:1fr;gap:1px}.crow .ct{text-align:left}}
+
+/* rank marker used by awards & competitions */
+.rank{
+  display:inline-block;min-width:2.5em;font-family:var(--sans);font-size:.7rem;font-weight:500;
+  letter-spacing:.1em;color:var(--accent);text-transform:uppercase;
+}
+
+/* ── home ───────────────────────────────────────────────────────────── */
+.hero{padding-top:92px;padding-bottom:12px}
+@media (max-width:620px){.hero{padding-top:56px}}
+.lockup{margin:0;display:flex;flex-direction:column;gap:14px}
+.lockup .word{
+  font-weight:400;font-size:clamp(3.4rem,10vw,6rem);line-height:.95;letter-spacing:.06em;
+}
+.lockup .expand{
+  font-family:var(--sans);font-weight:300;font-size:clamp(.72rem,1.5vw,.82rem);
+  letter-spacing:.24em;text-transform:uppercase;color:var(--ink-2);
+}
+.lockup .expand i{font-style:normal;color:var(--accent);font-weight:500}
+.mission{margin-top:44px;font-size:1.06rem;line-height:1.95;color:var(--ink-2);max-width:56ch}
+.mission strong{font-weight:500;color:var(--ink)}
+
+.interests{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-top:1px solid var(--line)}
+.interests div{padding:20px 22px 22px 0;border-bottom:1px solid var(--line)}
+.interests div + div{border-left:1px solid var(--line);padding-left:22px}
+@media (max-width:760px){
+  .interests{grid-template-columns:1fr 1fr}
+  .interests div{padding:16px 16px 18px 0}
+  .interests div:nth-child(odd){border-left:0;padding-left:0}
+  .interests div:nth-child(even){border-left:1px solid var(--line);padding-left:16px}
+}
+.interests .i-n{font-family:var(--sans);font-size:.72rem;letter-spacing:.16em;color:var(--ink-2);display:block;margin-bottom:5px}
+.interests .i-t{font-size:1.04rem;line-height:1.4}
+
+.contact{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:30px}
+.contact dt{font-family:var(--sans);font-size:.78rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-2);margin-bottom:6px}
+.contact dd{margin:0;line-height:1.7;color:var(--ink-2)}
+
+/* ── CV identity block ──────────────────────────────────────────────── */
+.ident{display:grid;grid-template-columns:1fr auto;gap:36px;align-items:start}
+@media (max-width:700px){.ident{grid-template-columns:1fr;gap:22px}}
+.ident .name{font-size:clamp(2rem,3.6vw,2.6rem);line-height:1.1;margin:0;font-weight:400}
+.ident .role{margin-top:8px;color:var(--ink-2);line-height:1.6}
+.ident .meta{font-family:var(--sans);font-size:.78rem;font-weight:300;line-height:2;color:var(--ink-2)}
+.ident .meta div{display:grid;grid-template-columns:5.8em 1fr;gap:10px}
+.ident .meta span{color:var(--ink-2);letter-spacing:.1em;font-size:.72rem;text-transform:uppercase}
+.ident .links{margin-top:12px;display:flex;gap:16px;font-family:var(--sans);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase}
+
+/* ── students: two-column portrait cards ───────────────────────────── */
+.people{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 18px}
+.people .row{display:block;min-width:0;padding:18px;border:1px solid var(--line);border-bottom:1px solid var(--line)}
+.people .row:last-child{border-bottom:1px solid var(--line)}
+.people .row>.when{padding:0 0 12px;font-family:var(--sans);font-size:.72rem;letter-spacing:.08em;white-space:normal;color:var(--muted)}
+.person-what{display:grid;grid-template-columns:100px minmax(0,1fr);align-items:start;gap:17px}
+.avatar{display:block;width:100%;height:auto;aspect-ratio:3/4;object-fit:cover;object-position:center 25%;flex-shrink:0;border:1px solid var(--line);background:var(--wash)}
+.person-text{min-width:0}
+.person-text .t{display:flex;flex-direction:column;gap:3px;line-height:1.4;font-size:1.02rem;overflow-wrap:anywhere}
+.people .row .t em{font-family:var(--sans);font-style:normal;color:var(--ink-2);font-size:.8rem}
+.person-text .s{margin-top:8px;font-family:var(--sans);font-size:.78rem;line-height:1.6}
+.person-text .s2{margin-top:6px;font-family:var(--sans);font-size:.7rem;line-height:1.7;overflow-wrap:anywhere}
+@media(max-width:760px){.people{grid-template-columns:1fr;gap:12px}}
+@media(max-width:430px){.people .row{padding:14px}.person-what{grid-template-columns:86px minmax(0,1fr);gap:13px}}
+/* ── photos ─────────────────────────────────────────────────────────── */
+.filters{display:flex;flex-wrap:wrap;gap:20px;padding:0 0 18px;border-bottom:1px solid var(--line)}
+.fbtn{
+  font-family:var(--sans);font-size:.7rem;font-weight:400;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted);padding-bottom:2px;border-bottom:1px solid transparent;
+}
+.fbtn:hover{color:var(--ink)}
+.fbtn[aria-pressed="true"]{color:var(--accent);border-bottom-color:var(--accent)}
+
+.gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:30px 24px;margin-top:34px}
+.tile{display:block;width:100%;padding:0;text-align:left}
+.tile .frame{display:block;position:relative;background:var(--wash);border:1px solid var(--line);overflow:hidden;aspect-ratio:4/3}
+.tile img{width:100%;height:100%;object-fit:cover}
+.tile:hover .frame{border-color:var(--line-2)}
+.tile .cap{margin-top:11px;display:flex;flex-direction:column;gap:2px}
+.tile .c-t{font-size:.98rem;line-height:1.45;color:var(--ink)}
+.tile:hover .c-t{color:var(--accent)}
+.tile .c-d{font-family:var(--sans);font-size:.7rem;font-weight:300;letter-spacing:.06em;color:var(--muted)}
+.tile .c-d .mk{color:var(--accent);letter-spacing:.14em;text-transform:uppercase;font-size:.62rem;margin-left:8px}
+
+.legend{
+  margin-top:52px;padding-top:20px;border-top:1px solid var(--line);
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px 30px;
+  font-family:var(--sans);font-size:.74rem;font-weight:300;color:var(--muted);line-height:1.8;
+}
+.legend b{font-weight:400;color:var(--ink-2);display:inline-block;min-width:6.4em}
+
+/* ── lightbox ───────────────────────────────────────────────────────── */
+.lb{position:fixed;inset:0;z-index:100;background:#0E0F12;display:grid;grid-template-rows:auto 1fr auto;color:#E9EAED}
+.lb-top{display:flex;align-items:center;gap:20px;padding:14px 20px;border-bottom:1px solid rgba(255,255,255,.1)}
+.lb-meta{flex:1;min-width:0;display:flex;align-items:baseline;gap:16px}
+.lb-count{font-family:var(--sans);font-size:.7rem;font-weight:300;letter-spacing:.14em;color:#8B929B;flex:0 0 auto}
+.lb-cap{font-size:1rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lb-cap i{font-style:normal;font-family:var(--sans);font-size:.72rem;font-weight:300;color:#8B929B;margin-left:12px;letter-spacing:.05em}
+.lb-tools{display:flex;align-items:center;gap:2px;flex:0 0 auto}
+.lb-tools button{
+  min-width:32px;height:32px;padding:0 8px;display:grid;place-items:center;
+  color:#C7CBD1;font-family:var(--sans);font-size:.95rem;font-weight:300;
+}
+.lb-tools button:hover{color:#fff;background:rgba(255,255,255,.08)}
+.lb-tools .t-txt{font-size:.66rem;letter-spacing:.14em;text-transform:uppercase}
+.lb-zoom{font-family:var(--sans);font-size:.7rem;font-weight:300;color:#8B929B;min-width:48px;text-align:center}
+.lb-tools .sep{width:1px;height:18px;background:rgba(255,255,255,.14);margin:0 8px}
+
+.lb-stage{position:relative;overflow:hidden;touch-action:none;display:grid;place-items:center;cursor:zoom-in;user-select:none}
+.lb-stage.zoomed{cursor:grab}
+.lb-stage.zoomed.dragging{cursor:grabbing}
+.lb-stage img{
+  max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;
+  transform-origin:center center;transition:transform .16s ease-out;-webkit-user-drag:none;
+}
+.lb-stage.dragging img{transition:none}
+@media (prefers-reduced-motion:reduce){.lb-stage img{transition:none}}
+
+.lb-nav{
+  position:absolute;top:50%;transform:translateY(-50%);z-index:3;
+  width:44px;height:64px;display:grid;place-items:center;
+  color:#C7CBD1;font-family:var(--sans);font-size:1.5rem;font-weight:300;
+}
+.lb-nav:hover{color:#fff;background:rgba(255,255,255,.07)}
+.lb-nav.prev{left:10px}
+.lb-nav.next{right:10px}
+
+.lb-rail{display:flex;gap:9px;padding:12px 20px;overflow-x:auto;border-top:1px solid rgba(255,255,255,.1)}
+.lb-rail button{flex:0 0 auto;width:72px;height:52px;padding:0;overflow:hidden;opacity:.42;border:1px solid transparent}
+.lb-rail button img{width:100%;height:100%;object-fit:cover}
+.lb-rail button:hover{opacity:.8}
+.lb-rail button[aria-current="true"]{opacity:1;border-color:#C0808C}
+@media (max-width:620px){.lb-rail button{width:58px;height:42px}}
+
+/* ── footer ─────────────────────────────────────────────────────────── */
+footer.site{border-top:1px solid var(--line);padding:34px 0 52px}
+footer.site .wrap-wide{display:flex;flex-wrap:wrap;gap:30px;justify-content:space-between;align-items:flex-start}
+footer.site .col{font-family:var(--sans);font-size:.86rem;font-weight:400;line-height:1.95;color:var(--ink-2)}
+footer.site .col b{display:block;font-family:var(--serif);font-size:1rem;font-weight:500;letter-spacing:.12em;color:var(--ink)}
+.theme-btn{font-family:var(--sans);font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--line-2);padding-bottom:2px}
+.theme-btn:hover{color:var(--ink)}
+/* ── 뉴스 사진 ───────────────────────────────────────────────────────── */
+.news-img{display:block;max-width:420px;width:100%;border-radius:10px;margin-top:10px;border:1px solid var(--line);object-fit:cover;}
+
+
+</style>
+</head>
+<body>
+<a class="skip" href="#main">본문 바로가기</a>
+
+<header class="masthead">
+  <div class="wrap-wide">
+    <a class="wordmark" href="#/home">
+      <b>AURA LAB</b>
+      <span>Hannam University</span>
+    </a>
+    <button class="burger" id="burger" aria-expanded="false" aria-controls="nav">Menu</button>
+    <nav class="main" id="nav" aria-label="주요 메뉴">
+      <a href="#/home">Home</a>
+      <a href="#/cv">CV</a>
+      <a href="#/publications">Publications</a>
+      <a href="#/teaching">Teaching</a>
+      <a href="#/students">Students</a>
+      <a href="#/photos">Photos</a>
+      <a href="#/news">News</a>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+<!-- ── HOME ─────────────────────────────────────────────────────────── -->
+<section data-route="home">
+  <div class="wrap-wide hero">
+    <h1 class="lockup">
+      <span class="word">AURA</span>
+      <span class="expand"><i>A</i>udio <i>U</i>nderstanding &amp; <i>R</i>easoning <i>A</i>I Lab</span>
+    </h1>
+    <p class="mission">
+      본 연구실은 음성 및 오디오 신호를 중심으로 <strong>AI 기반 지능형 분석 기술</strong>을 연구합니다.
+      딥러닝과 표현 학습을 활용해 <strong>음성 위조 탐지</strong>, <strong>오디오 이상 탐지</strong>,
+      <strong>생체 신호 기반 질환 예측 모델</strong>을 개발하며, 잡음·도메인 변화·데이터 불균형 등
+      현실적인 문제를 고려한 <strong>견고하고 신뢰 가능한 모델 설계</strong>에 집중합니다.
+      보안, 의료, 헬스케어 분야에서 실질적으로 활용 가능한 오디오 AI 기술 구현을 목표로 합니다.
+    </p>
+  </div>
+
+  <div class="wrap-wide" style="margin-top:72px">
+    <h2 class="sec">Research Interests</h2>
+    <div class="interests">
+      <div><span class="i-n">01</span><span class="i-t">Audio Signal Processing</span></div>
+      <div><span class="i-n">02</span><span class="i-t">Audio Data Augmentation</span></div>
+      <div><span class="i-n">03</span><span class="i-t">Audio Deepfake Detection</span></div>
+      <div><span class="i-n">04</span><span class="i-t">Cardiac Diseases Detection</span></div>
+    </div>
+  </div>
+
+  <div class="wrap-wide" style="margin-top:64px">
+    <h2 class="sec">Location</h2>
+    <dl class="contact" style="margin:22px 0 0">
+      <div>
+        <dt>Address</dt>
+        <dd>대전광역시 대덕구 한남로 70<br>한남대학교 계의돈기념관 202호</dd>
+      </div>
+      <div>
+        <dt>Contact</dt>
+        <dd><a href="mailto:soyul5458@hnu.kr">soyul5458@hnu.kr</a><br>Tel +82-42-629-7634</dd>
+      </div>
+    </dl>
+  </div>
+</section>
+
+<!-- ── CV ───────────────────────────────────────────────────────────── -->
+<section data-route="cv" hidden>
+  <div class="wrap-wide page">
+    <div class="ident">
+      <div>
+        <h1 class="name">Soyul Han</h1>
+        <p class="role">
+          Assistant Professor<br>
+          Department of AI Data Science, Hannam University<br>
+          70 Hannam-ro, Daedeok-gu, Daejeon, 34430, Korea
+        </p>
+        <p class="links">
+          <a href="https://github.com/soyul5458" target="_blank" rel="noopener">GitHub</a>
+          <a href="https://scholar.google.com/citations?user=klNXli0AAAAJ" target="_blank" rel="noopener">Google Scholar</a>
+          <a href="https://orcid.org/0000-0003-0156-250X" target="_blank" rel="noopener">ORCID</a>
+        </p>
+      </div>
+      <div class="meta">
+        <div><span>Tel</span>+82-42-629-7634</div>
+        <div><span>Fax</span>0504-268-5458</div>
+        <div><span>Email</span><a href="mailto:soyul5458@hnu.kr">soyul5458@hnu.kr</a></div>
+        <div><span>ORCID</span>0000-0003-0156-250X</div>
+        <div><span>연구자번호</span>12490984</div>
+      </div>
+    </div>
+
+    <section class="block">
+      <h2 class="sec">Professional Positions</h2>
+      <div class="rows" id="cvPositions"></div>
+    </section>
+
+    <section class="block">
+      <h2 class="sec">Education</h2>
+      <div class="rows" id="cvEducation"></div>
+    </section>
+
+    <section class="block">
+      <h2 class="sec">Research Interests</h2>
+      <div class="rows" id="cvInterests"></div>
+    </section>
+
+    <section class="block">
+      <h2 class="sec">Awards</h2>
+      <div class="rows" id="cvAwards"></div>
+    </section>
+
+    <section class="block">
+      <h2 class="sec">Data Competitions</h2>
+      <div class="rows" id="cvComps"></div>
+    </section>
+
+    <section class="block">
+      <h2 class="sec">Projects</h2>
+      <div class="rows" id="cvProjects"></div>
+    </section>
+  </div>
+</section>
+
+<!-- ── PUBLICATIONS ─────────────────────────────────────────────────── -->
+<section data-route="publications" hidden>
+  <div class="wrap-wide page">
+    <h1 class="page-title">Publications</h1>
+    <section class="block" style="margin-top:44px">
+      <h2 class="sec">International</h2>
+      <div id="pubList"></div>
+    </section>
+    <section class="block">
+      <h2 class="sec">Oral Presentations</h2>
+      <div id="talkList"></div>
+    </section>
+  </div>
+</section>
+
+<!-- ── TEACHING ─────────────────────────────────────────────────────── -->
+<section data-route="teaching" hidden>
+  <div class="wrap-wide page">
+    <h1 class="page-title">Teaching</h1>
+    <section class="block" style="margin-top:44px">
+      <h2 class="sec">Courses</h2>
+      <div class="rows" id="courseList"></div>
+    </section>
+    <section class="block">
+      <h2 class="sec">External Education Programs</h2>
+      <div class="rows" id="extList"></div>
+    </section>
+    <section class="block">
+      <h2 class="sec">Workshop</h2>
+      <div class="rows" id="wsList"></div>
+    </section>
+  </div>
+</section>
+
+<!-- ── STUDENTS ─────────────────────────────────────────────────────── -->
+<section data-route="students" hidden>
+  <div class="wrap-wide page">
+    <h1 class="page-title">Students</h1>
+    <section class="block" style="margin-top:44px">
+      <h2 class="sec">Current Members</h2>
+      <div class="rows people" id="curList"></div>
+    </section>
+    <section class="block">
+      <h2 class="sec">Alumni &amp; Former Members</h2>
+      <div class="rows people" id="alumList"></div>
+    </section>
+  </div>
+</section>
+
+<!-- ── PHOTOS ───────────────────────────────────────────────────────── -->
+<section data-route="photos" hidden>
+  <div class="wrap-wide page">
+    <h1 class="page-title">Photos</h1>
+    <p class="page-intro">사진을 누르면 큰 화면으로 열립니다. 확대·이동·좌우 넘기기가 모두 가능합니다.</p>
+    <div class="filters" id="galFilters" style="margin-top:32px"></div>
+    <div class="gal" id="gal"></div>
+    <div class="legend">
+      <div><b>확대 / 축소</b> 휠, 더블클릭, + −</div>
+      <div><b>원래 크기</b> Fit, 0</div>
+      <div><b>이동</b> 확대 후 끌기</div>
+      <div><b>이전 / 다음</b> ← →, 썸네일</div>
+      <div><b>닫기</b> Esc, 배경 클릭</div>
+      <div><b>휴대폰</b> 두 손가락 확대, 좌우로 밀기</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── NEWS ─────────────────────────────────────────────────────────── -->
+<section data-route="news" hidden>
+  <div class="wrap-wide page">
+    <h1 class="page-title">News</h1>
+    <div class="rows" id="newsList" style="margin-top:40px"></div>
+  </div>
+</section>
+
+</main>
+
+<footer class="site">
+  <div class="wrap-wide">
+    <div class="col">
+      <b>AURA LAB</b>
+      Audio Understanding &amp; Reasoning AI Lab<br>
+      Department of AI Data Science, Hannam University
+    </div>
+    <div class="col">
+      대전광역시 대덕구 한남로 70<br>
+      한남대학교 계의돈기념관 202호<br>
+      <a href="mailto:soyul5458@hnu.kr">soyul5458@hnu.kr</a>
+    </div>
+    <div class="col">
+      <button class="theme-btn" id="themeBtn">Light / Dark</button>
+    </div>
+  </div>
+</footer>
+
+<div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="사진 크게 보기">
+  <div class="lb-top">
+    <div class="lb-meta">
+      <span class="lb-count" id="lbCount"></span>
+      <span class="lb-cap" id="lbCap"></span>
+    </div>
+    <div class="lb-tools">
+      <button id="lbOut" title="축소 (−)" aria-label="축소">−</button>
+      <span class="lb-zoom" id="lbZoom">100%</span>
+      <button id="lbIn" title="확대 (+)" aria-label="확대">+</button>
+      <button id="lbFit" class="t-txt" title="원래 크기 (0)" aria-label="원래 크기">Fit</button>
+      <span class="sep" aria-hidden="true"></span>
+      <button id="lbClose" title="닫기 (Esc)" aria-label="닫기">✕</button>
+    </div>
+  </div>
+  <div class="lb-stage" id="lbStage">
+    <button class="lb-nav prev" id="lbPrev" aria-label="이전 사진">‹</button>
+    <img id="lbImg" alt="">
+    <button class="lb-nav next" id="lbNext" aria-label="다음 사진">›</button>
+  </div>
+  <div class="lb-rail" id="lbRail"></div>
+</div>
+
+<script id="site-data" type="application/json">{"photos":[{"src":"https://sites.google.com/sitesv-images-rt/AMxu72uI3chSJE0zE4B1VVMPfYfs6eMuvGXorhiZwxCEh5bUmvY3boEZFeGJQZdvf22jYyC3o3b2l8kDBG_ujxy5FnVdXfpHKvAVTMp-5zhmYLUG5DIKcPaTxerAxg3DDN2R6O-inD1pfUlvrPNIxN9NSDEXxNRV3TrOjRXyeqyzWywrlmtWGGD-RZ0sshtauW5b_FKUYsc_vWT67p-gyDeUgZ0o_bFiCteY8nO4FlFC=w1280","caption":"2025 스승의 날","date":"2025.05.15","year":"2025"},{"src":"images/2026-esdd.jpg","caption":"ESDD 2026 Challenge","date":"2026.05","year":"2026","demo":true},{"src":"images/2026-seminar.jpg","caption":"연구실 세미나","date":"2026.09","year":"2026","demo":true},{"src":"images/2026-newmember.jpg","caption":"신입 연구원 환영","date":"2026.08","year":"2026","demo":true},{"src":"images/2026-workshop.jpg","caption":"하계 워크숍","date":"2026.07","year":"2026","demo":true},{"src":"images/2025-lab.jpg","caption":"연구실 개소","date":"2025.03","year":"2025","demo":true},{"src":"images/2025-kdas.jpg","caption":"한국자료분석학회 · 충북대학교","date":"2025.11.28","year":"2025","demo":true},{"src":"images/2024-icassp.jpg","caption":"ICASSP 2024 · 서울 COEX","date":"2024.04","year":"2024","demo":true},{"src":"images/2023-ijcai.jpg","caption":"IJCAI 2023 Workshop · Macao","date":"2023.08","year":"2023","demo":true}],"positions":[{"when":"2027.03 – present","t":"Assistant Professor","s":"Department of AI Data Science, <a href='https://www.hannam.ac.kr' target='_blank' rel='noopener'>Hannam University</a>, Daejeon, Korea"},{"when":"2025.03 – 2027.02","t":"Assistant Professor","s":"Department of Big Data Application, Hannam University, Daejeon, Korea"},{"when":"2024.04 – 2025.02","t":"Postdoctoral Researcher","s":"<a href='https://idis.snu.ac.kr/' target='_blank' rel='noopener'>Institute for Data Innovation in Science</a>, Seoul National University, Seoul, Korea","s2":"Supervisor: Prof. <a href='https://jung.snu.ac.kr/' target='_blank' rel='noopener'>Sungkyu Jung</a>"},{"when":"2022.09 – 2023.08","t":"Lecturer","s":"<a href='https://stat.cau.ac.kr/' target='_blank' rel='noopener'>Department of Applied Statistics</a>, Chung-Ang University, Seoul, Korea"},{"when":"2020.09 – 2022.03","t":"Research Engineer","s":"Analysis Department, <a href='https://rexsw.com/index.php?lang=1' target='_blank' rel='noopener'>Rexsoft</a>, Seoul, Korea"},{"when":"2017.01 – 2018.12","t":"Researcher","s":"임상연구협력센터, <a href='https://www.ncc.re.kr/' target='_blank' rel='noopener'>국립암센터</a>, 고양, Korea"}],"education":[{"when":"2024.02","t":"Ph.D. in Statistics","s":"Chung-Ang University, Seoul, Korea","s2":"Advisor: Prof. <a href='https://ikwak2.github.io/aboutme.html' target='_blank' rel='noopener'>Il-Youp Kwak</a>"},{"when":"2017.02","t":"M.S. in Statistics","s":"Chung-Ang University, Seoul, Korea","s2":"Advisor: Prof. Yeong-Hwa Kim"},{"when":"2015.02","t":"B.S. in Economics","s":"Hannam University, Daejeon, Korea"}],"cvInterests":[{"t":"Real-world big data analysis","s":"Develop new service that combines enterprise big data"},{"t":"Deep learning applications","s":"Focus on voice and signal classifications"},{"t":"Healthcare and medical data analysis"}],"awards":[{"when":"2026.05","rank":"3rd","t":"Environmental Sound Deepfake Detection Challenge 2026, Track 2","s":"ICASSP 2026"},{"when":"2026.05","rank":"4th","t":"Environmental Sound Deepfake Detection Challenge 2026, Track 1","s":"ICASSP 2026"},{"when":"2026.04","t":"JMIS Most Cited Article Award","s":"The Korean Society of Endo-Laparoscopic &amp; Robotic Surgery"},{"when":"2023.08","rank":"3rd","t":"The Second Audio Deepfake Detection Challenge (ADD 2023), Track 1.2: Fake Audio Detection Track","s":"IJCAI 2023"},{"when":"2022.09","rank":"3rd","t":"The 23rd PhysioNet Challenge 2022: Heart Murmur Detection from Phonocardiogram Recordings","s":"MIT Laboratory for Computational Physiology"},{"when":"2021.11","t":"Encouragement Award","s":"2021 Fall Conference of the Korean Statistical Society"},{"when":"2014.11","t":"Citation Award","s":"Hannam University"},{"when":"2014.05","t":"Citation Award","s":"Hannam University"},{"when":"2013.11","t":"Excellence Award, Student Achievement Award","s":"Hannam University"}],"competitions":[{"when":"2026.05","rank":"3rd","t":"Environmental Sound Deepfake Detection Challenge 2026, Track 2","s":"ICASSP 2026"},{"when":"2026.05","rank":"4th","t":"Environmental Sound Deepfake Detection Challenge 2026, Track 1","s":"ICASSP 2026"},{"when":"2025.12","rank":"3rd","t":"Environmental Sound Deepfake Detection Challenge 2026, Track 2"},{"when":"2023.05","rank":"3rd","t":"The Second Audio Deepfake Detection Challenge 2023, Track 1.2, Fake Audio Detection Track"},{"when":"2022.09","rank":"3rd","t":"Heart Murmur Detection from Phonocardiogram Recordings","s":"George B. Moody PhysioNet Challenge 2022"},{"when":"2022.09","rank":"5th","t":"Clinical Outcome Prediction from Phonocardiogram Recordings","s":"George B. Moody PhysioNet Challenge 2022"}],"projects":[{"when":"2026.06 – 2027.01","t":"AI 기반 멀티모달 데이터 분석 및 도메인 특화 의사결정 지원 플랫폼","s":"ANCHOR"},{"when":"2023.09 – 2024.02","t":"딥러닝을 이용한 음성위조탐지 기술 연구","s":"과학기술정보통신부"},{"when":"2022.09 – 2022.11","t":"딥러닝을 활용한 음성보안 문제 연구","s":"과학기술정보통신부"},{"when":"2022.08 – 2022.10","t":"보건의료빅데이터를 기반으로 한 핵의학 영상검사의 저선량방사선 위험도 평가","s":"삼성서울병원"},{"when":"2021.04 – 2021.11","t":"중환자실 적정성 평가 개선방안","s":"건강보험심사평가원"},{"when":"2020.09 – 2021.07","t":"COVID19 의약품 개발 연구를 위한 비임상 데이터 저장 플랫폼 개발","s":"KMPC 국가마우스표현형분석사업단"},{"when":"2019.09 – 2020.05","t":"영상 잡음 감소를 위한 통계 알고리즘 개발","s":"교육부"}],"pubs":[{"year":2026,"authors":"Chung S, Kim E, Kim D, Heo G, You J, Lee N, Choi S, Han S, Oh S, Kwak IY","title":"BEAT2AASIST: BEATs feature splitting with dual-branch AASIST for environmental sound deepfake detection","venue":"35th International Joint Conference on Artificial Intelligence and the 29th European Conference on Artificial Intelligence (IJCAI-ECAI 2026)","note":"preprint"},{"year":2026,"authors":"Chung S, Kim E, Kim D, Heo G, You J, Lee N, Choi S, Han S, Oh S, Kwak IY","title":"BEAT2AASIST model with layer fusion for ESDD 2026 Challenge","venue":"2026 IEEE International Conference on Acoustics, Speech, and Signal Processing, Barcelona, Spain"},{"year":2026,"authors":"Sung M, Jang HJ, Han S, Won S, Lee B, Kim YS","title":"Direct and indirect effects of the COVID-19 pandemic on mortality and critical care utilization in South Korea","venue":"Acute and Critical Care, 41(2), 315–325. 2026.03"},{"year":2025,"authors":"Han S, Seo J, Choi S, Kang T, Chung S, Lee S, Park S, Oh S, Kwak IY","title":"Enhancing Voice Spoofing Detection in Noisy Environments Using Frequency Feature Masking Augmentation","venue":"Engineering Science and Technology, an International Journal, 63, 101972. 2025.03","note":"SCIE, Top 7%"},{"year":2025,"authors":"Lee S, Choi S, Kang T, Chung S, Han S, Seo J, Park S, Kim E, Oh S, Kwak IY","title":"iWAX: Interpretable Wav2Vec-AASIST-XGBoost Framework for Voice Spoofing Detection","venue":"Scientific Reports, 15, 40491. 2025.11","note":"SCI, Q1"},{"year":2024,"authors":"Han S, Kang T, Lee J, Kim N, Won H, Kim YH, Gong W, Kwak IY","title":"A Deep Neural Network Approach to Heart Murmur Detection Using Spectrogram and Peak Interval Features","venue":"Engineering Applications of Artificial Intelligence, 137, 109156. 2024.11","note":"SCIE, Top 7%"},{"year":2024,"authors":"Leem AY, Han S, Chung KS, et al.","title":"Development and Validation of a Novel Simple Prognostic Model for Predicting Mortality in Korean Intensive Care Units Using National Insurance Claims Data","venue":"Korean Journal of Internal Medicine, 2024.04","note":"SCIE, Q2"},{"year":2024,"authors":"Choi S, Chung S, Lee S, Han S, Kang T, Seo J, Kwak IY, Oh S","title":"TB-ResNet: Bridging the Gap from TDNN to ResNet in Automatic Speaker Verification with Temporal-Bottleneck Enhancement","venue":"IEEE International Conference on Acoustics, Speech and Signal Processing (ICASSP 2024), COEX, Seoul, Korea. 2024.04"},{"year":2023,"authors":"Han S, Kwak IY","title":"Mastering Data Visualization with Python: Practical Tips for Researchers","venue":"Journal of Minimally Invasive Surgery, 2023.12","note":"Scopus"},{"year":2023,"authors":"Han S, Jeon W, Gong W, Kwak IY","title":"MCHeart: Multi-Channel-Based Heart Signal Processing Scheme for Heart Noise Detection Using Deep Learning","venue":"Biology, 12(10), 1291. 2023.09","note":"SCIE, Q1"},{"year":2023,"authors":"Han S, Kang T, Choi S, Seo J, Chung S, Lee S, Oh S, Kwak IY","title":"CAU-KU Deep Fake Detection System for ADD 2023 Challenge","venue":"The 32nd International Joint Conference on Artificial Intelligence (IJCAI 2023, Workshop on Deepfake Audio Detection and Analysis), Macao SAR, China","links":[["pdf","http://addchallenge.cn/files/2023/pdf/p23-han.pdf"]]},{"year":2023,"authors":"Kwak IY, Kwag S, Lee J, Jeon Y, Hwang J, Choi HJ, Yang JH, Han SY, Huh JH, Lee CH, Yoon JW","title":"Voice Spoofing Detection through Residual Network, Max Feature Map, and Depthwise Separable Convolution","venue":"IEEE Access, 11, 49140–49152. 2023.05","note":"SCIE, Q2"},{"year":2022,"authors":"Kwak IY, Choi S, Yang J, Lee Y, Han S, Oh S","title":"Low-Quality Fake Audio Detection through Frequency Feature Masking","venue":"30th ACM International Conference on Multimedia (ACM MM 2022, Workshop on Deepfake Detection for Audio Multimedia), Lisbon, Portugal"},{"year":2022,"authors":"Lee J, Kang T, Kim N, Han S, Won H, Gong W","title":"Deep Learning-Based Heart Murmur Detection Using Frequency-Time Domain Features of Heartbeat Sounds","venue":"The 49th Computing in Cardiology conference (CinC 2022), Tampere, Finland"},{"year":2022,"authors":"Yoon S, Noh H, Jin H, Lee S, Han S, et al.","title":"Laboratory Information Management System for COVID-19 Non-Clinical Efficacy Trial Data","venue":"Laboratory Animal Research, 2022.06","note":"Scopus"}],"talks":[{"year":2025,"title":"Deep Learning-Based Audio Deepfake Detection System for a Competitive Challenge","venue":"Korean Data Analysis Society, Chungbuk National University, Korea. November 28, 2025"},{"year":2025,"title":"End-to-End Deep Neural Network Framework for Phonocardiogram-Based Heart Disease Diagnosis","venue":"Korean Data &amp; Information Science Society, Chosun University, Korea. May 16, 2025"},{"year":2024,"title":"CAU-KU Deep Fake Detection System for ADD 2023 Challenge","venue":"Korean Data Analysis Society, University of Seoul, Korea. June 27, 2024"},{"year":2023,"title":"CAU-KU Deep Fake Detection System for ADD 2023 Challenge","venue":"The 32nd International Joint Conference on Artificial Intelligence (IJCAI 2023), Workshop on Deepfake Audio Detection and Analysis, Macao SAR, China"}],"courses":[{"t":"Python 기초","when":"Fall 2025, Fall 2026"},{"t":"Python 심화","when":"Spring 2025, Spring 2026"},{"t":"영상처리","when":"Spring 2025, Spring 2026"},{"t":"오디오데이터분석","when":"Fall 2025, Fall 2026"},{"t":"인공지능","when":"Fall 2025, Fall 2026"},{"t":"기초통계","when":"Spring 2025, Spring 2026"},{"t":"선형모형","when":"Spring 2025, Spring 2026"},{"t":"딥러닝특론","when":"Fall 2026"}],"extPrograms":[{"when":"2025 – 2026","t":"AID Education Program: AI/SW Training for Employees","s":"Ministry of Education / National Institute for Lifelong Education (NILE, 국가평생교육진흥원)","topics":["AI 에이전트 개발: 바이브 코딩으로 만드는 나만의 직원 만들기","직장인들을 위한 ChatGPT 활용 스킬","사무자동화 — Notion","SQL"]},{"when":"2026 – 2030","t":"AI Bootcamp for Advanced Industry Talent Development","s":"Ministry of Education / Korea Institute for Advancement of Technology (KIAT, 한국산업기술진흥원)","topics":["AI 프로그래밍"]},{"when":"2026 – 2030","t":"Bio-AI Bootcamp for Advanced Industry Talent Development","s":"Ministry of Education / Korea Institute for Advancement of Technology (KIAT, 한국산업기술진흥원)","topics":["AX 데이터분석 실무"]}],"workshops":[{"when":"2025.07.28","t":"Chungbuk National University"},{"when":"2024.09.26","t":"Seoul National University"}],"members":[{"en":"Esther Kim","ko":"김에스더","deg":"Undergraduate Student","when":"March 2026 – Present","int":"음성/이미지 데이터, 의료, 마케팅","gh":"https://github.com/dptmej03","photo":"images/students/esther-kim.jpg"},{"en":"Bubin Kim","ko":"김부빈","deg":"Undergraduate Student","when":"April 2026 – Present","int":"의료, 음성 데이터, 인공지능","gh":"https://github.com/bubin-kim","photo":"images/students/bubin-kim.jpg"},{"en":"Taeyeon Kim","ko":"김태연","deg":"Undergraduate Student","when":"April 2026 – Present","int":"음성 데이터, 인공지능, 딥러닝","gh":"https://github.com/xxoyeon-22","photo":"images/students/taeyeon-kim.jpg"},{"en":"Taeyeon Won","ko":"원태연","deg":"Undergraduate Student","when":"May 2026 – Present","int":"데이터분석, 금융공학(금융데이터), 인공지능","gh":"https://github.com/taeyeon0814","photo":"images/students/taeyeon-won.jpg"},{"en":"Seongmin Hong","ko":"홍성민","deg":"Undergraduate Student","when":"August 2026 – Present","int":"인공지능, 딥러닝, 음성 데이터","gh":"https://github.com/seongmin0531","photo":"images/students/seongmin-hong.jpg"}],"alumni":[],"news":[{"when":"2023.08","t":"IJCAI 2023 Grand Challenge 3등 수상","body":["ADD(Audio Deep Synthesis Detection Challenge) 분야에 참가한 CAU_KU팀은 49개 팀과 경합을 벌인 끝에 수상의 기쁨을 안게 됐다.","CAU_KU팀이 참여한 Track 1.2에서는 위조 음성을 찾아내는 딥러닝 모형을 만드는 문제가 출제됐다. Track 1.1에서 공격팀이 생성한 Fake Audio를 얼마나 잘 맞추는지를 평가하는 2개 라운드로 대회가 진행됐다. CAU_KU팀은 1라운드와 2라운드에서 모두 3등을 차지하며, 최종 3등상이란 결과물을 받아들게 됐다.","한소율 박사는 IJCAI 대회 워크숍에 참여해 모형에 대한 상세 내용을 발표했다. 보다 자세한 내용은 <a href='http://addchallenge.cn/files/2023/pdf/p23-han.pdf' target='_blank' rel='noopener'>IJCAI Workshop 페이퍼</a>를 통해 확인할 수 있다."]}]}</script>
+<script>
+/* ══════════════════════════════════════════════════════════════════════
+   AURA LAB — 내용 수정은 이 아래 목록만 고치면 됩니다. (README.md 참고)
+   ══════════════════════════════════════════════════════════════════════ */
+
+/* ══════════════════════════════════════════════════════════════════════
+   이 아래는 화면을 그리는 코드입니다. 보통은 고칠 일이 없습니다.
+   ══════════════════════════════════════════════════════════════════════ */
+const DATA = JSON.parse(document.getElementById('site-data').textContent);
+
+const $  = (s, r) => (r || document).querySelector(s);
+const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]));
+
+/* ── 사진이 없을 때 쓰는 조용한 플레이스홀더 ─────────────────────────── */
+const phCache = new Map();
+function placeholder(seed){
+  seed = String(seed || '');
+  if (phCache.has(seed)) return phCache.get(seed);
+  let h = 2166136261;
+  for (let i = 0; i < seed.length; i++){ h ^= seed.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; }
+  const rnd = () => ((h = (Math.imul(h, 1664525) + 1013904223) >>> 0) / 4294967296);
+  const N = 64, PAD = 90, MAXH = 210;
+  const step = (800 - PAD * 2) / (N - 1);
+  const p1 = rnd() * 6.28, p2 = rnd() * 6.28;
+  let bars = '';
+  for (let i = 0; i < N; i++){
+    const u = i / (N - 1);
+    const env = Math.pow(Math.sin(Math.PI * u), .5);
+    const a = Math.abs(.36 * Math.sin(u * 19 + p1) + .32 * Math.sin(u * 37 + p2) + .32 * rnd()) * env;
+    const hgt = Math.max(2, a * MAXH);
+    bars += '<rect x="' + (PAD + i * step).toFixed(1) + '" y="' + (300 - hgt / 2).toFixed(1) +
+            '" width="2" height="' + hgt.toFixed(1) + '" fill="#B9BCC3"/>';
+  }
+  const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="800" height="600" viewBox="0 0 800 600">' +
+    '<rect width="800" height="600" fill="#EDEEF0"/>' +
+    '<line x1="90" y1="300" x2="710" y2="300" stroke="#D5D7DC" stroke-width="1"/>' +
+    bars + '</svg>';
+  const uri = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+  phCache.set(seed, uri);
+  return uri;
+}
+
+/* ── 라우터 ──────────────────────────────────────────────────────────── */
+const ROUTES = ['home','cv','publications','teaching','students','photos','news'];
+const TITLES = { home:'AURA LAB', cv:'CV', publications:'Publications', teaching:'Teaching',
+                 students:'Students', photos:'Photos', news:'News' };
+function route(){
+  const r0 = (location.hash || '').replace(/^#\/?/, '').split('?')[0];
+  const r = ROUTES.includes(r0) ? r0 : 'home';
+  $$('section[data-route]').forEach(s => { s.hidden = s.dataset.route !== r; });
+  $$('nav.main a').forEach(a => {
+    if (a.getAttribute('href').replace('#/','') === r) a.setAttribute('aria-current','page');
+    else a.removeAttribute('aria-current');
+  });
+  $('#nav').classList.remove('open');
+  $('#burger').setAttribute('aria-expanded','false');
+  document.title = r === 'home' ? 'AURA LAB' : 'AURA LAB — ' + TITLES[r];
+  window.scrollTo(0, 0);
+}
+window.addEventListener('hashchange', route);
+$('#burger').addEventListener('click', e => {
+  const open = $('#nav').classList.toggle('open');
+  e.currentTarget.setAttribute('aria-expanded', String(open));
+});
+$('#themeBtn').addEventListener('click', () => {
+  const root = document.documentElement, cur = root.getAttribute('data-theme');
+  const dark = cur ? cur === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+  root.setAttribute('data-theme', dark ? 'light' : 'dark');
+});
+
+/* ── 공통 행 렌더러 ──────────────────────────────────────────────────── */
+function rowHTML(o){
+  const rank = o.rank ? `<span class="rank">${esc(o.rank)}</span>` : '';
+  return `<div class="row${o.full ? ' full' : ''}">
+    <div class="when">${o.when ? esc(o.when) : ''}</div>
+    <div class="what">
+      <div class="t">${rank}${o.t || ''}</div>
+      ${o.s  ? `<div class="s">${o.s}</div>` : ''}
+      ${o.s2 ? `<div class="s2">${o.s2}</div>` : ''}
+    </div>
+  </div>`;
+}
+const fill = (sel, arr) => { $(sel).innerHTML = arr.map(rowHTML).join(''); };
+
+/* ── 논문 ────────────────────────────────────────────────────────────── */
+const markHan = a => esc(a).replace(/(Han S(?:Y)?)(?=[,\s]|$)/g, '<b>$1</b>');
+function pubHTML(p){
+  const links = (p.links || []).map(([n,u]) => `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(n)}</a>`).join(' · ');
+  return `<div class="row">
+    <div class="when">${p.year}</div>
+    <div class="what">
+      <div class="t">${esc(p.title)}</div>
+      <div class="s">${markHan(p.authors)}</div>
+      <div class="s2"><i>${p.venue}</i>${p.note ? ` · ${esc(p.note)}` : ''}${links ? ` · ${links}` : ''}</div>
+    </div>
+  </div>`;
+}
+
+/* ── 구성원 ──────────────────────────────────────────────────────────── */
+function portraitPlaceholder(name){
+  const words = String(name || '').trim().split(/\s+/).filter(Boolean);
+  const initials = (words.length > 1 ? words[0][0] + words[words.length - 1][0] : (words[0] || 'A').slice(0, 2)).replace(/[^A-Za-z0-9가-힣]/g, '').toUpperCase();
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 480"><rect width="360" height="480" fill="#F4F4F6"/><path d="M28 28h304v424H28z" fill="none" stroke="#E4E6EA"/><text x="180" y="230" text-anchor="middle" font-family="Georgia,serif" font-size="92" fill="#6B2737">${initials}</text><text x="180" y="278" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" letter-spacing="4" fill="#8B929B">PORTRAIT</text></svg>`;
+  return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+}
+const personHTML = p => {
+  const fallback = portraitPlaceholder(p.en);
+  return `<div class="row person-card">
+    <div class="when">${esc(p.when)}</div>
+    <div class="what person-what">
+      <img class="avatar" src="${p.photo ? esc(p.photo) : fallback}" data-fallback="${fallback}" alt="${esc(p.en)} 증명사진" loading="lazy">
+      <div class="person-text">
+        <div class="t"><b>${esc(p.en)}</b><em>${esc(p.ko)}</em></div>
+        <div class="s">${esc(p.deg)}</div>
+        <div class="s2">Interests: ${esc(p.int)} · <a href="${esc(p.gh)}" target="_blank" rel="noopener">GitHub</a></div>
+      </div>
+    </div>
+  </div>`;
+};
+
+/* ── 사진 그리드 ─────────────────────────────────────────────────────── */
+let view = [];
+const srcFor = p => p.src || placeholder(p.caption);
+function renderGal(y){
+  view = y === 'all' ? DATA.photos.slice() : DATA.photos.filter(p => p.year === y);
+  $('#gal').innerHTML = view.map((p, i) => `
+    <button class="tile" data-i="${i}" aria-label="${esc(p.caption)} 크게 보기">
+      <span class="frame"><img src="${esc(srcFor(p))}" alt="${esc(p.caption)}" loading="lazy"></span>
+      <span class="cap">
+        <span class="c-t">${esc(p.caption)}</span>
+        <span class="c-d">${esc(p.date || '')}${p.demo ? '<span class="mk">예시</span>' : ''}</span>
+      </span>
+    </button>`).join('');
+  $$('#gal img').forEach((im, i) => im.addEventListener('error', () => {
+    if (im.dataset.fell) return;
+    im.dataset.fell = '1';
+    im.src = placeholder(view[i] && view[i].caption);
+  }));
+}
+$('#galFilters').addEventListener('click', e => {
+  const b = e.target.closest('.fbtn'); if (!b) return;
+  $$('#galFilters .fbtn').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+  renderGal(b.dataset.y);
+});
+$('#gal').addEventListener('click', e => {
+  const t = e.target.closest('.tile'); if (!t) return;
+  openLB(Number(t.dataset.i));
+});
+
+/* ── 전체 다시 그리기 (데이터가 바뀔 때마다 다시 호출) ─────────────────── */
+function renderAll(){
+  fill('#cvPositions',  DATA.positions);
+  fill('#cvEducation',  DATA.education);
+  fill('#cvInterests',  DATA.cvInterests.map(o => ({ t:o.t, s:o.s, full:true })));
+  fill('#cvAwards',     DATA.awards);
+  fill('#cvComps',      DATA.competitions);
+  fill('#cvProjects',   DATA.projects);
+  $('#courseList').innerHTML = DATA.courses.map(c =>
+    `<div class="crow"><span class="cn">${esc(c.t)}</span><span class="ct">${esc(c.when)}</span></div>`).join('');
+  fill('#wsList',       DATA.workshops);
+  fill('#extList',      DATA.extPrograms.map(p => ({
+    when:p.when, t:p.t, s:p.s,
+    s2:p.topics && p.topics.length ? p.topics.map(esc).join(' · ') : ''
+  })));
+
+  $('#pubList').innerHTML = `<div class="rows">${DATA.pubs.map(pubHTML).join('')}</div>`;
+  $('#talkList').innerHTML = `<div class="rows">${DATA.talks.map(t => `
+    <div class="row">
+      <div class="when">${t.year}</div>
+      <div class="what">
+        <div class="t">"${esc(t.title)}"</div>
+        <div class="s2"><i>${t.venue}</i></div>
+      </div>
+    </div>`).join('')}</div>`;
+
+  $('#curList').innerHTML  = DATA.members.map(personHTML).join('');
+  $('#alumList').innerHTML = DATA.alumni.map(personHTML).join('');
+  $('#alumList').closest('.block').hidden = !DATA.alumni.length;
+  $$('#curList img.avatar, #alumList img.avatar').forEach(im => im.addEventListener('error', () => {
+    if (im.dataset.fell) return;
+    im.dataset.fell = '1';
+    im.src = im.dataset.fallback || portraitPlaceholder(im.alt || 'member');
+  }));
+
+  $('#newsList').innerHTML = DATA.news.map(n => `
+    <div class="row">
+      <div class="when">${esc(n.when)}</div>
+      <div class="what">
+        <div class="t">${esc(n.t)}</div>
+        ${n.image ? `<img class="news-img" src="${esc(n.image)}" alt="${esc(n.t)}" loading="lazy">` : ''}
+        ${n.body.map(b => `<div class="s" style="margin-top:8px">${b}</div>`).join('')}
+      </div>
+    </div>`).join('');
+  $$('#newsList img.news-img').forEach(im => im.addEventListener('error', () => {
+    if (im.dataset.fell) return;
+    im.dataset.fell = '1';
+    im.src = placeholder(im.alt || 'news');
+  }));
+
+  const years = [...new Set(DATA.photos.map(p => p.year))].sort((a,b) => b.localeCompare(a));
+  $('#galFilters').innerHTML =
+    `<button class="fbtn" data-y="all" aria-pressed="true">All</button>` +
+    years.map(y => `<button class="fbtn" data-y="${y}" aria-pressed="false">${y}</button>`).join('');
+  renderGal('all');
+}
+renderAll();
+
+
+/* ── 라이트박스 ──────────────────────────────────────────────────────── */
+const lb = $('#lb'), stage = $('#lbStage'), lbImg = $('#lbImg');
+let idx = 0, scale = 1, tx = 0, ty = 0, baseW = 0, baseH = 0, lastFocus = null;
+const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
+
+function apply(){
+  lbImg.style.transform = `translate(${tx}px, ${ty}px) scale(${scale})`;
+  $('#lbZoom').textContent = Math.round(scale * 100) + '%';
+  stage.classList.toggle('zoomed', scale > 1.001);
+}
+function fitSize(){
+  const r = stage.getBoundingClientRect();
+  const nw = lbImg.naturalWidth || 4, nh = lbImg.naturalHeight || 3;
+  const k = Math.min(r.width / nw, r.height / nh);
+  baseW = nw * k; baseH = nh * k;
+}
+function clampPan(){
+  const r = stage.getBoundingClientRect();
+  const mx = Math.max(0, (baseW * scale - r.width) / 2);
+  const my = Math.max(0, (baseH * scale - r.height) / 2);
+  tx = clamp(tx, -mx, mx);
+  ty = clamp(ty, -my, my);
+}
+function reset(){ scale = 1; tx = 0; ty = 0; apply(); }
+function zoomAt(cx, cy, factor){
+  const r = stage.getBoundingClientRect();
+  const px = cx - r.left - r.width / 2, py = cy - r.top - r.height / 2;
+  const ns = clamp(scale * factor, 1, 8), k = ns / scale;
+  tx = px - (px - tx) * k;
+  ty = py - (py - ty) * k;
+  scale = ns;
+  if (scale <= 1.001) { scale = 1; tx = 0; ty = 0; }
+  clampPan(); apply();
+}
+const centerZoom = f => { const r = stage.getBoundingClientRect(); zoomAt(r.left + r.width/2, r.top + r.height/2, f); };
+
+function show(i){
+  idx = (i + view.length) % view.length;
+  const p = view[idx];
+  lbImg.src = srcFor(p);
+  lbImg.alt = p.caption;
+  $('#lbCount').textContent = (idx + 1) + ' / ' + view.length;
+  $('#lbCap').innerHTML = esc(p.caption) + (p.date ? ` <i>${esc(p.date)}</i>` : '');
+  reset();
+  $$('#lbRail button').forEach((b, n) => b.setAttribute('aria-current', String(n === idx)));
+  const act = $('#lbRail button[aria-current="true"]');
+  if (act) act.scrollIntoView({ block:'nearest', inline:'center' });
+  [idx - 1, idx + 1].forEach(n => {
+    const q = view[(n + view.length) % view.length];
+    if (q) { const im = new Image(); im.src = srcFor(q); }
+  });
+  const single = view.length < 2;
+  $('#lbPrev').hidden = single;
+  $('#lbNext').hidden = single;
+}
+lbImg.addEventListener('load', () => { fitSize(); clampPan(); apply(); });
+lbImg.addEventListener('error', () => {
+  if (lb.hidden || !lbImg.getAttribute('src') || !view[idx]) return;
+  const ph = placeholder(view[idx].caption);
+  if (lbImg.src !== ph) lbImg.src = ph;
+});
+
+function buildRail(){
+  $('#lbRail').innerHTML = view.map((p, i) =>
+    `<button data-i="${i}" aria-current="false" aria-label="${esc(p.caption)}"><img src="${esc(srcFor(p))}" alt=""></button>`
+  ).join('');
+  $$('#lbRail img').forEach((im, i) => im.addEventListener('error', () => {
+    if (im.dataset.fell) return;
+    im.dataset.fell = '1';
+    im.src = placeholder(view[i] && view[i].caption);
+  }));
+  $('#lbRail').hidden = view.length < 2;
+}
+$('#lbRail').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  show(Number(b.dataset.i));
+});
+
+function openLB(i){
+  lastFocus = document.activeElement;
+  buildRail();
+  lb.hidden = false;
+  document.body.style.overflow = 'hidden';
+  show(i);
+  $('#lbClose').focus({ preventScroll:true });
+}
+function closeLB(){
+  lb.hidden = true;
+  document.body.style.overflow = '';
+  lbImg.removeAttribute('src');
+  if (lastFocus && lastFocus.focus) lastFocus.focus({ preventScroll:true });
+}
+$('#lbClose').addEventListener('click', closeLB);
+$('#lbPrev').addEventListener('click', e => { e.stopPropagation(); show(idx - 1); });
+$('#lbNext').addEventListener('click', e => { e.stopPropagation(); show(idx + 1); });
+$('#lbIn').addEventListener('click', () => centerZoom(1.5));
+$('#lbOut').addEventListener('click', () => centerZoom(1/1.5));
+$('#lbFit').addEventListener('click', reset);
+
+document.addEventListener('keydown', e => {
+  if (lb.hidden) return;
+  const k = e.key;
+  if (k === 'Escape')           { closeLB(); e.preventDefault(); }
+  else if (k === 'ArrowRight')  { show(idx + 1); e.preventDefault(); }
+  else if (k === 'ArrowLeft')   { show(idx - 1); e.preventDefault(); }
+  else if (k === 'Home')        { show(0); e.preventDefault(); }
+  else if (k === 'End')         { show(view.length - 1); e.preventDefault(); }
+  else if (k === '+' || k === '=') { centerZoom(1.4); e.preventDefault(); }
+  else if (k === '-' || k === '_') { centerZoom(1/1.4); e.preventDefault(); }
+  else if (k === '0')           { reset(); e.preventDefault(); }
+});
+
+stage.addEventListener('wheel', e => {
+  e.preventDefault();
+  zoomAt(e.clientX, e.clientY, e.deltaY < 0 ? 1.16 : 1/1.16);
+}, { passive:false });
+
+stage.addEventListener('dblclick', e => {
+  if (e.target.closest('.lb-nav')) return;
+  if (scale > 1.001) reset(); else zoomAt(e.clientX, e.clientY, 2.6);
+});
+
+const pts = new Map();
+let startTx = 0, startTy = 0, startX = 0, startY = 0, pinchD = 0, pinchS = 1, moved = false;
+
+stage.addEventListener('pointerdown', e => {
+  if (e.target.closest('.lb-nav')) return;
+  stage.setPointerCapture(e.pointerId);
+  pts.set(e.pointerId, { x:e.clientX, y:e.clientY });
+  moved = false;
+  if (pts.size === 1){
+    startX = e.clientX; startY = e.clientY; startTx = tx; startTy = ty;
+    stage.classList.add('dragging');
+  } else if (pts.size === 2){
+    const [a, b] = [...pts.values()];
+    pinchD = Math.hypot(a.x - b.x, a.y - b.y);
+    pinchS = scale;
+  }
+});
+stage.addEventListener('pointermove', e => {
+  if (!pts.has(e.pointerId)) return;
+  pts.set(e.pointerId, { x:e.clientX, y:e.clientY });
+  if (pts.size === 2){
+    const [a, b] = [...pts.values()];
+    const d = Math.hypot(a.x - b.x, a.y - b.y);
+    if (pinchD > 0) zoomAt((a.x + b.x) / 2, (a.y + b.y) / 2, clamp(pinchS * (d / pinchD), 1, 8) / scale);
+    moved = true;
+    return;
+  }
+  const dx = e.clientX - startX, dy = e.clientY - startY;
+  if (Math.abs(dx) > 4 || Math.abs(dy) > 4) moved = true;
+  if (scale > 1.001){ tx = startTx + dx; ty = startTy + dy; clampPan(); apply(); }
+});
+stage.addEventListener('pointerup', e => {
+  if (!pts.has(e.pointerId)) return;
+  const dx = e.clientX - startX, dy = e.clientY - startY;
+  pts.delete(e.pointerId);
+  if (pts.size) return;
+  stage.classList.remove('dragging');
+  pinchD = 0;
+  if (scale <= 1.001 && moved){
+    if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy)) { show(idx + (dx < 0 ? 1 : -1)); return; }
+    if (dy > 110 && Math.abs(dy) > Math.abs(dx)) { closeLB(); return; }
+  }
+  if (!moved && e.target === stage) closeLB();
+});
+stage.addEventListener('pointercancel', e => {
+  pts.delete(e.pointerId); stage.classList.remove('dragging'); pinchD = 0;
+});
+window.addEventListener('resize', () => { if (!lb.hidden){ fitSize(); clampPan(); apply(); } });
+
+
+
+route();
+</script>
+</body></html>
