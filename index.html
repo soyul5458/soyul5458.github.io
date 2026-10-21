@@ -27,6 +27,9 @@
   --line-2:#CFD3D9;
   --accent:#6B2737;
   --accent-2:#8E3B4D;
+  --rank-bg:#FFF3D6;
+  --rank-ink:#7C5710;
+  --rank-border:#E7D099;
   --rule-strong:#15171C;
   --maxw:840px;
   --maxw-wide:1180px;
@@ -45,6 +48,9 @@
     --line-2:#3A3E45;
     --accent:#C0808C;
     --accent-2:#D09AA4;
+    --rank-bg:#3B321F;
+    --rank-ink:#F0D789;
+    --rank-border:#78663B;
     --rule-strong:#3A3E45;
   }
 }
@@ -59,6 +65,9 @@
   --line-2:#3A3E45;
   --accent:#C0808C;
   --accent-2:#D09AA4;
+  --rank-bg:#3B321F;
+  --rank-ink:#F0D789;
+  --rank-border:#78663B;
   --rule-strong:#3A3E45;
 }
 
@@ -190,8 +199,11 @@ h2.sec{
 
 /* rank marker used by awards & competitions */
 .rank{
-  display:inline-block;min-width:2.5em;font-family:var(--sans);font-size:.7rem;font-weight:500;
-  letter-spacing:.1em;color:var(--accent);text-transform:uppercase;
+  display:inline-flex;align-items:center;justify-content:center;min-width:3.1em;
+  margin-right:.5em;padding:.1em .48em;border:1px solid var(--rank-border);border-radius:999px;
+  background:var(--rank-bg);color:var(--rank-ink);
+  font-family:var(--sans);font-size:.7rem;font-weight:700;letter-spacing:.04em;
+  line-height:1.45;text-transform:uppercase;vertical-align:.08em;
 }
 
 /* ── home ───────────────────────────────────────────────────────────── */
